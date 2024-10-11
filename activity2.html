@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 2: Guess the Destination</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Activity 2: Where Are We Going?</h2>
+        <p>You know it's a trip, but where are we going?</p>
+        <select id="citySelect">
+            <option value="">-- Select a City --</option>
+            <option value="New York">New York</option>
+            <option value="Los Angeles">Los Angeles</option>
+            <option value="Chicago">Chicago</option>
+            <option value="Houston">Houston</option>
+            <option value="Phoenix">Phoenix</option>
+            <option value="Philadelphia">Philadelphia</option>
+            <option value="San Antonio">San Antonio</option>
+            <option value="San Diego">San Diego</option>
+            <option value="Dallas">Dallas</option>
+            <option value="San Jose">San Jose</option>
+            <option value="Austin">Austin</option>
+            <option value="Jacksonville">Jacksonville</option>
+            <option value="Fort Worth">Fort Worth</option>
+            <option value="Columbus">Columbus</option>
+            <option value="Charlotte">Charlotte</option>
+            <option value="San Francisco">San Francisco</option>
+            <option value="Indianapolis">Indianapolis</option>
+            <option value="Seattle">Seattle</option>
+            <option value="Denver">Denver</option>
+            <option value="Washington">Washington</option>
+            <option value="Boston">Boston</option>
+            <option value="El Paso">El Paso</option>
+            <option value="Detroit">Detroit</option>
+            <option value="Nashville">Nashville</option>
+            <option value="Portland">Portland</option>
+            <option value="Memphis">Memphis</option>
+            <option value="Oklahoma City">Oklahoma City</option>
+            <option value="Las Vegas">Las Vegas</option>
+            <option value="Louisville">Louisville</option>
+            <option value="Baltimore">Baltimore</option>
+            <option value="Milwaukee">Milwaukee</option>
+            <option value="Albuquerque">Albuquerque</option>
+            <option value="Tucson">Tucson</option>
+            <option value="Fresno">Fresno</option>
+            <option value="Sacramento">Sacramento</option>
+            <option value="Kansas City">Kansas City</option>
+            <option value="Long Beach">Long Beach</option>
+            <option value="Mesa">Mesa</option>
+            <option value="Atlanta">Atlanta</option>
+            <option value="Colorado Springs">Colorado Springs</option>
+            <option value="Virginia Beach">Virginia Beach</option>
+            <option value="Raleigh">Raleigh</option>
+            <option value="Omaha">Omaha</option>
+            <option value="Miami">Miami</option>
+            <option value="Oakland">Oakland</option>
+            <option value="Minneapolis">Minneapolis</option>
+            <option value="Tulsa">Tulsa</option>
+            <option value="Wichita">Wichita</option>
+            <option value="New Orleans">New Orleans</option>
+        </select>
+        <button onclick="submitCity()">Submit</button>
+        <p id="feedback"></p>
+    </div>
+
+    <script>
+        // Correct city in lowercase for case-insensitive comparison
+        const correctCity = 'denver';
+        let guessCount = 0;
+
+        function submitCity() {
+            const selectedCity = document.getElementById('citySelect').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+
+            if (selectedCity === "") {
+                feedback.textContent = "Please select a city from the dropdown.";
+                feedback.style.color = "red";
+                return;
+            }
+
+            if (selectedCity === correctCity) {
+                feedback.textContent = "DENVER AHHHHHHHHHHHH";
+                feedback.style.color = "green";
+                // Redirect to the next activity after a short delay
+                setTimeout(() => {
+                    window.location.href = 'activity3.html';
+                }, 2000); // 2-second delay
+            } else {
+                guessCount++;
+                feedback.textContent = `Incorrect guess. Try again! (Attempt ${guessCount})`;
+                feedback.style.color = "red";
+            }
+
+            // Reset the dropdown to default
+            document.getElementById('citySelect').value = "";
+        }
+    </script>
+</body>
+</html>

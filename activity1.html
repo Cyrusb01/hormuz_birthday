@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 1: Guess the Surprise</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Activity 1: What Do You Think We Got You?</h2>
+        <p>Type your guess below and click Submit.</p>
+        <input type="text" id="guessInput" placeholder="Your guess here">
+        <button onclick="submitGuess()">Submit</button>
+        <p id="feedback"></p>
+        <p id="hint" style="display:none; color: blue;"></p>
+    </div>
+
+    <script>
+        // Define the keywords that are considered correct guesses
+        const keywords = ['trip', 'travel', 'journey', 'vacation', 'holiday', 'excursion', 'tour'];
+
+        // Array of multiple hints
+        const hints = [
+            "Hint 1: We have never gotten you this before",
+            "Hint 2: Don't be like Madonna shes a _ girl",
+            "Hint 3: You might be high and not like weed well maybe like that too",
+            "Hint 4: It ryhmes with rip",
+            "Hint 5: It's not in college station"
+        ];
+
+        // Initialize guess count and hint count
+        let guessCount = 0;
+        let hintCount = 0;
+
+        // Function to handle guess submission
+        function submitGuess() {
+            const guess = document.getElementById('guessInput').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            const hint = document.getElementById('hint');
+
+            if (guess === "") {
+                feedback.textContent = "Please enter a guess.";
+                return;
+            }
+
+            // Check if the guess contains any of the keywords
+            const isCorrect = keywords.some(keyword => guess.includes(keyword));
+
+            if (isCorrect) {
+                feedback.textContent = "Correct! You've guessed it!";
+                // Redirect to the next activity after a short delay
+                setTimeout(() => {
+                    window.location.href = 'activity2.html';
+                }, 2000); // 2-second delay
+            } else {
+                guessCount++;
+                feedback.textContent = `Incorrect guess. Try again! (Attempt ${guessCount})`;
+
+                // Every 10 incorrect guesses, show a hint
+                if (guessCount % 6 === 0 && hintCount < hints.length) {
+                    showHint();
+                    hintCount++;
+                } else if (guessCount % 6 === 0 && hintCount >= hints.length) {
+                    // If all hints have been shown, you can choose to repeat hints or provide a final message
+                    showFinalHint();
+                }
+            }
+
+            // Clear the input field for the next guess
+            document.getElementById('guessInput').value = "";
+        }
+
+        // Function to display the next hint
+        function showHint() {
+            const hint = document.getElementById('hint');
+            hint.style.display = 'block';
+            hint.textContent = hints[hintCount];
+        }
+
+        // Optional: Function to display a final message after all hints are used
+        function showFinalHint() {
+            const hint = document.getElementById('hint');
+            hint.style.display = 'block';
+            hint.textContent = "You've reached the maximum number of hints! Here's a final clue: It's something that will take you places!";
+        }
+    </script>
+</body>
+</html>

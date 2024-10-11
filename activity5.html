@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 5: Who Is Joining the Trip?</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles specific to activity5.html */
+        .guess-container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .guess-container input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .guess-container button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .guess-container button:hover {
+            background-color: #005f6a;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+            font-weight: bold;
+        }
+
+        #pictures-container {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .friend-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #ccc;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .friend-picture.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .friend-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #final-picture-container {
+            margin-top: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        #final-picture-container img {
+            width: 300px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #nextBtn {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            display: none;
+        }
+
+        #nextBtn:hover {
+            background-color: #45a049;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .guess-container input[type="text"] {
+                width: 80%;
+            }
+
+            .friend-picture {
+                width: 120px;
+                height: 120px;
+            }
+
+            #final-picture-container img {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Whats the crew looking like?</h2>
+        <p>Which swaggarts are going to Denver</p>
+        <div class="guess-container">
+            <input type="text" id="guessInput" placeholder="Enter a name (e.g., Joe Ballard)">
+            <button onclick="submitGuess()">Submit Guess</button>
+            <p id="feedback"></p>
+        </div>
+        <div id="pictures-container">
+            <!-- Friend Pictures will be dynamically added here -->
+            <div class="friend-picture" id="cyrus-picture">
+                <img src="images/cyrus.PNG" alt="Cyrus">
+            </div>
+            <div class="friend-picture" id="zaal-picture">
+                <img src="images/zaal.PNG" alt="Zaal">
+            </div>
+            <div class="friend-picture" id="hormuz-picture">
+                <img src="images/hormuz.PNG" alt="Hormuz">
+            </div>
+            <div class="friend-picture" id="yazad-picture">
+                <img src="images/yazad.jpg" alt="Yazad">
+            </div>
+        </div>
+        <div id="final-picture-container">
+            <h3>Bad Boyz Take the small D!</h3>
+            <img src="images/all.jpeg" alt="Final Group Picture">
+        </div>
+        <button id="nextBtn" onclick="goToNextActivity()">Next Activity</button>
+    </div>
+
+    <script>
+        // List of friends
+        const friends = {
+            'cyrus': {
+                name: 'Cyrus',
+                pictureId: 'cyrus-picture'
+            },
+            'zaal': {
+                name: 'Zaal',
+                pictureId: 'zaal-picture'
+            },
+            'hormuz': {
+                name: 'Hormuz',
+                pictureId: 'hormuz-picture'
+            },
+            'yazad': {
+                name: 'Yazad',
+                pictureId: 'yazad-picture'
+            }
+        };
+
+        // Track guessed friends
+        const guessedFriends = {};
+
+        // Total number of friends to guess
+        const totalFriends = Object.keys(friends).length;
+
+        // Function to handle guess submission
+        function submitGuess() {
+            const guessInput = document.getElementById('guessInput').value.trim().toLowerCase();
+            const feedback = document.getElementById('feedback');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (guessInput === "") {
+                feedback.textContent = "Please enter a name.";
+                return;
+            }
+
+            if (friends.hasOwnProperty(guessInput)) {
+                if (guessedFriends[guessInput]) {
+                    feedback.textContent = `You've already guessed ${capitalizeFirstLetter(guessInput)}. Try another name.`;
+                } else {
+                    // Correct guess
+                    guessedFriends[guessInput] = true;
+                    feedback.textContent = `Good job! ${capitalizeFirstLetter(guessInput)} is joining us.`;
+
+                    // Reveal the picture with animation
+                    const pictureDiv = document.getElementById(`${guessInput}-picture`);
+                    pictureDiv.classList.add('visible');
+
+                    // Check if all friends have been guessed
+                    if (Object.keys(guessedFriends).length === totalFriends) {
+                        // Show final group picture after a short delay
+                        setTimeout(() => {
+                            document.getElementById('final-picture-container').style.display = 'block';
+                            document.getElementById('nextBtn').style.display = 'inline-block';
+                        }, 1000); // 1-second delay for animation
+                    }
+                }
+            } else {
+                // Incorrect guess
+                feedback.textContent = `Sorry, ${capitalizeFirstLetter(guessInput)} isn't part of the trip. Try again!`;
+            }
+
+            // Clear the input field
+            document.getElementById('guessInput').value = "";
+        }
+
+        // Function to capitalize first letter
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Function to navigate to the next activity
+        function goToNextActivity() {
+            window.location.href = 'activity6.html'; // Update with the actual next activity page
+        }
+    </script>
+</body>
+</html>

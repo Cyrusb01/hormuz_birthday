@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 3: Where Are We Staying?</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles specific to activity3.html */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: border 0.3s;
+        }
+
+        .image-grid img:hover {
+            border: 2px solid #4CAF50;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-size: 18px;
+            color: red;
+            font-weight: bold;
+        }
+
+        #successMessage {
+            margin-top: 20px;
+            font-size: 20px;
+            color: green;
+            font-weight: bold;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .image-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Where Are We Staying?</h2>
+        <p>Click on the picture that shows our awesome Airbnb!</p>
+        <div class="image-grid">
+            <!-- Correct Image -->
+            
+            <!-- dis Images -->
+            <img src="images/dis1.jpg" alt="dis 1" data-correct="false">
+            <img src="images/dis2.jpg" alt="dis 2" data-correct="false">
+            <img src="images/dis3.jpg" alt="dis 3" data-correct="false">
+            <img src="images/dis4.jpg" alt="dis 4" data-correct="false">
+            <img src="images/dis5.jpg" alt="dis 5" data-correct="false">
+            <img src="images/dis6.jpg" alt="dis 6" data-correct="false">
+            <img src="images/dis7.jpg" alt="dis 7" data-correct="false">
+            <img src="images/dis8.jpg" alt="dis 8" data-correct="false">
+            <img src="images/dis9.jpg" alt="dis 9" data-correct="false">
+            <img src="images/dis10.jpg" alt="dis 10" data-correct="false">
+            <img src="images/dis11.jpg" alt="dis 11" data-correct="false">
+            <img src="images/airbnb.png" alt="Airbnb" data-correct="true">
+            <img src="images/dis12.jpg" alt="dis 12" data-correct="false">
+            <img src="images/dis13.jpg" alt="dis 13" data-correct="false">
+            <img src="images/dis14.jpg" alt="dis 14" data-correct="false">
+            <img src="images/dis15.jpg" alt="dis 15" data-correct="false">
+            <img src="images/dis16.jpg" alt="dis 16" data-correct="false">
+            <img src="images/dis17.jpg" alt="dis 17" data-correct="false">
+            <img src="images/dis18.jpg" alt="dis 18" data-correct="false">
+            <img src="images/dis19.jpg" alt="dis 19" data-correct="false">
+        </div>
+        <p id="feedback"></p>
+        <p id="successMessage" class="hidden">Oh Yeaaaaa. That sexy beast is ours</p>
+        <button id="nextBtn" class="hidden" onclick="goToNextActivity()">Let's get a closer look of that</button>
+    </div>
+
+    <script>
+        // Function to handle image clicks
+        function handleImageClick(event) {
+            const isCorrect = event.target.getAttribute('data-correct') === 'true';
+            const feedback = document.getElementById('feedback');
+            const successMessage = document.getElementById('successMessage');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (isCorrect) {
+                feedback.textContent = "";
+                successMessage.classList.remove('hidden');
+                nextBtn.classList.remove('hidden');
+                // Optionally, highlight the correct image
+                event.target.style.border = "2px solid green";
+                // Disable further clicks
+                disableAllImages();
+            } else {
+                feedback.textContent = "Oops! That's not the right one. Try again!";
+            }
+        }
+
+        // Function to disable all images after correct selection
+        function disableAllImages() {
+            const images = document.querySelectorAll('.image-grid img');
+            images.forEach(img => {
+                img.removeEventListener('click', handleImageClick);
+                img.style.cursor = "default";
+                img.style.opacity = "0.7";
+            });
+        }
+
+        // Function to navigate to the next activity
+        function goToNextActivity() {
+            window.location.href = 'activity4.html';
+        }
+
+        // Attach click event listeners to all images
+        const images = document.querySelectorAll('.image-grid img');
+        images.forEach(img => {
+            img.addEventListener('click', handleImageClick);
+        });
+    </script>
+</body>
+</html>
