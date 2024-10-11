@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 6: Reveal the Sushi Reservation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles specific to activity6.html */
+        .puzzle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .instructions {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .puzzle-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            background-size: 300px 300px; /* Adjust based on image size */
+            cursor: grab;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        .puzzle-piece.dragging {
+            opacity: 0.5;
+            transform: scale(1.1);
+        }
+
+        .success-message {
+            font-size: 20px;
+            color: green;
+            font-weight: bold;
+            display: none;
+            margin-top: 20px;
+        }
+
+        #nextBtn {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            display: none; /* Hidden by default */
+        }
+
+        #nextBtn:hover {
+            background-color: #45a049;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .puzzle-grid {
+                grid-template-columns: repeat(3, 80px);
+                grid-template-rows: repeat(3, 80px);
+            }
+
+            .puzzle-piece {
+                width: 80px;
+                height: 80px;
+                background-size: 240px 240px; /* Adjust based on image size */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Reveal the Sushi Reservation</h2>
+        <div class="puzzle-container">
+            <p class="instructions">Arrange the puzzle pieces to reveal our sushi reservation!</p>
+            <div class="puzzle-grid" id="puzzleGrid">
+                <!-- Puzzle pieces will be generated here -->
+            </div>
+            <p class="success-message" id="successMessage">Great job! We've reserved a table at <strong>[Sushi Restaurant Name]</strong>!</p>
+            <button id="b" onclick="goToNextActivity()">Next Activity</button>
+        </div>
+    </div>
+
+    <script>
+        const imageSrc = 'images/uchi.jpg'; // Replace with your image path
+        const puzzleGrid = document.getElementById('puzzleGrid');
+        const successMessage = document.getElementById('successMessage');
+        const nextBtn = document.getElementById('nextBtn');
+
+        const gridSize = 3; // 3x3 puzzle
+        const pieces = [];
+
+        // Initialize the puzzle
+        function initPuzzle() {
+            // Create puzzle pieces
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const piece = document.createElement('div');
+                    piece.classList.add('puzzle-piece');
+                    piece.style.backgroundImage = `url(${imageSrc})`;
+                    piece.style.backgroundPosition = `-${col * 100}px -${row * 100}px`; // Adjust based on piece size
+                    piece.dataset.row = row;
+                    piece.dataset.col = col;
+                    piece.dataset.correct = `${row}-${col}`;
+                    pieces.push(piece);
+                }
+            }
+
+            // Shuffle the pieces
+            shuffleArray(pieces);
+
+            // Append shuffled pieces to the grid
+            pieces.forEach(piece => puzzleGrid.appendChild(piece));
+
+            // Add drag and drop functionality
+            addDragAndDrop();
+        }
+
+        // Shuffle function using Fisher-Yates algorithm
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Drag and Drop functionality
+        let draggedPiece = null;
+
+        function addDragAndDrop() {
+            const pieces = document.querySelectorAll('.puzzle-piece');
+
+            pieces.forEach(piece => {
+                piece.addEventListener('dragstart', dragStart);
+                piece.addEventListener('dragover', dragOver);
+                piece.addEventListener('drop', drop);
+                piece.setAttribute('draggable', true);
+            });
+        }
+
+        function dragStart(e) {
+            draggedPiece = e.target;
+            e.target.classList.add('dragging');
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const targetPiece = e.target;
+
+            if (targetPiece === draggedPiece) return;
+
+            // Swap background positions
+            const tempBackground = draggedPiece.style.backgroundPosition;
+            draggedPiece.style.backgroundPosition = targetPiece.style.backgroundPosition;
+            targetPiece.style.backgroundPosition = tempBackground;
+
+            // Remove dragging class
+            draggedPiece.classList.remove('dragging');
+
+            // Check for success
+            checkSuccess();
+        }
+
+        // Check if all pieces are in correct position
+        function checkSuccess() {
+            const allCorrect = Array.from(document.querySelectorAll('.puzzle-piece')).every(piece => {
+                const backgroundPos = piece.style.backgroundPosition;
+                const expectedRow = piece.dataset.row;
+                const expectedCol = piece.dataset.col;
+                const expectedPos = `-${expectedCol * 100}px -${expectedRow * 100}px`;
+                return backgroundPos === expectedPos;
+            });
+
+            if (allCorrect) {
+                successMessage.style.display = 'block';
+                nextBtn.style.display = 'inline-block';
+                // Optionally, add a fade-in animation to the success message
+                successMessage.style.animation = 'fadeIn 1s ease-in-out';
+                // Disable further dragging
+                disableAllImages();
+            }
+        }
+
+        // Function to disable all images after correct selection
+        function disableAllImages() {
+            const images = document.querySelectorAll('.puzzle-piece');
+            images.forEach(img => {
+                img.removeEventListener('click', handleImageClick);
+                img.removeEventListener('dragstart', dragStart);
+                img.removeEventListener('dragover', dragOver);
+                img.removeEventListener('drop', drop);
+                img.style.cursor = "default";
+                img.style.opacity = "0.7";
+            });
+        }
+
+        // Function to navigate to the next activity
+        function goToNextActivity() {
+            window.location.href = 'activity7.html'; // Update with your next activity page
+        }
+
+        // Initialize the puzzle on page load
+        window.onload = initPuzzle;
+    </script>
+</body>
+    
+</html>

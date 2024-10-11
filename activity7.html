@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 7: NBA Game Reveal</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Styles specific to activity7.html */
+        .reveal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .reveal-container video {
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .reveal-message {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #D50032; /* Mavericks red color */
+            font-weight: bold;
+            display: none;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .reveal-message img {
+            margin-top: 20px;
+            width: 150px;
+            height: auto;
+        }
+
+        #nextBtn {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #D50032; /* Mavericks red color */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            display: none; /* Hidden by default */
+        }
+
+        #nextBtn:hover {
+            background-color: #a30028;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .reveal-container video {
+                width: 95%;
+            }
+
+            .reveal-message {
+                font-size: 20px;
+            }
+
+            .reveal-message img {
+                width: 120px;
+            }
+
+            #nextBtn {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2></h2>
+        <div class="reveal-container">
+            <video id="funnyClip" autoplay muted>
+                <source src="images/jason_terry.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="reveal-message" id="revealMessage">
+                <p>Let's go suck the D in against the Nuggs!</p>
+                <p>your doppelganger is on this team as well</p>
+                <img src="images/jamal.jpg" alt="Dallas Mavericks Logo">
+            </div>
+            <button id="nextBtn" onclick="goToNextActivity()">Next Activity</button>
+        </div>
+    </div>
+
+    <script>
+        const funnyClip = document.getElementById('funnyClip');
+        const revealMessage = document.getElementById('revealMessage');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Listen for the end of the video
+        funnyClip.addEventListener('ended', () => {
+            revealMessage.style.display = 'block';
+            nextBtn.style.display = 'inline-block';
+        });
+
+        // Function to navigate to the next activity
+        function goToNextActivity() {
+            window.location.href = 'activity8.html'; // Update with your next activity page
+        }
+    </script>
+</body>
+</html>

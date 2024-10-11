@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Congratulations!</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .prize-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .prize-container img {
+            width: 300px;
+            max-width: 80%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .prize-container h2 {
+            font-size: 28px;
+            color: #6aaa64;
+            margin-bottom: 10px;
+        }
+
+        .prize-container p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .congrats-button {
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #6aaa64;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+        }
+
+        .congrats-button:hover {
+            background-color: #538d4e;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .prize-container img {
+                width: 80%;
+            }
+
+            .prize-container h2 {
+                font-size: 24px;
+            }
+
+            .prize-container p {
+                font-size: 16px;
+            }
+
+            .congrats-button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="prize-container">
+        <img src="images/oontz.gif" alt="Your Final Prize">
+        <h2>We going to Oontz Oontz</h2>
+        <p>Get ready for a classic Denver EDM concert</p>
+        <button class="congrats-button" onclick="redirectToCelebration()">Final Page</button>
+    </div>
+
+    <script>
+        function redirectToCelebration() {
+            window.location.href = 'itenerary.html'; // Create this page to conclude the scavenger hunt
+        }
+    </script>
+</body>
+</html>

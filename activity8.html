@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Challenge: Wordle</title>
+    <style>
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .wordle-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #000000;
+        }
+
+        .game-grid {
+            display: grid;
+            grid-template-rows: repeat(6, 50px);
+            grid-gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .guess-row {
+            display: grid;
+            grid-template-columns: repeat(3, 50px);
+            grid-gap: 5px;
+        }
+
+        .letter-box {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #3a3a3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border-radius: 5px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .letter-box.correct {
+            background-color: #538d4e;
+            border-color: #538d4e;
+            color: white;
+        }
+
+        .letter-box.present {
+            background-color: #b59f3b;
+            border-color: #b59f3b;
+            color: white;
+        }
+
+        .letter-box.absent {
+            background-color: #3a3a3c;
+            border-color: #3a3a3c;
+            color: white;
+        }
+
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 500px;
+        }
+
+        .key {
+            width: 40px;
+            height: 58px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #818384;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        .key.correct {
+            background-color: #538d4e;
+        }
+
+        .key.present {
+            background-color: #b59f3b;
+        }
+
+        .key.absent {
+            background-color: #3a3a3c;
+        }
+
+        .key.wide {
+            width: 80px;
+        }
+
+        .message {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #538d4e;
+            display: none;
+            text-align: center;
+        }
+
+        .congrats-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #538d4e;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+            transition: background-color 0.3s;
+        }
+
+        .congrats-button:hover {
+            background-color: #3a5f34;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .letter-box {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+            }
+
+            .key {
+                width: 30px;
+                height: 45px;
+                margin: 3px;
+                font-size: 14px;
+            }
+
+            .key.wide {
+                width: 60px;
+            }
+
+            .congrats-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+
+            .message {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wordle-container">
+        <h2>Final Challenge: Wordle</h2>
+        <div class="game-grid" id="gameGrid">
+            <!-- 6 rows x 3 columns grid -->
+            <!-- Dynamically generated -->
+        </div>
+        <div class="keyboard" id="keyboard">
+            <!-- Keyboard keys will be generated here -->
+        </div>
+        <div class="message" id="message">
+            <!-- Success or Failure message -->
+        </div>
+        <button class="congrats-button" id="congratsButton">View Your Prize</button>
+    </div>
+
+    <script>
+        const targetWord = 'EDM'.toUpperCase();
+        const maxAttempts = 9;
+        const wordLength = 3;
+
+        const gameGrid = document.getElementById('gameGrid');
+        const keyboard = document.getElementById('keyboard');
+        const message = document.getElementById('message');
+        const congratsButton = document.getElementById('congratsButton');
+
+        let currentAttempt = 0;
+        let currentGuess = [];
+        let gameOver = false;
+
+        // Initialize the game grid
+        function initGameGrid() {
+            for (let i = 0; i < maxAttempts; i++) {
+                const row = document.createElement('div');
+                row.classList.add('guess-row');
+                for (let j = 0; j < wordLength; j++) {
+                    const box = document.createElement('div');
+                    box.classList.add('letter-box');
+                    row.appendChild(box);
+                }
+                gameGrid.appendChild(row);
+            }
+        }
+
+        // Initialize the keyboard
+        function initKeyboard() {
+            const keys = [
+                'Q','W','E','R','T','Y','U','I','O','P',
+                'A','S','D','F','G','H','J','K','L',
+                'Z','X','C','V','B','N','M','ENTER','BACKSPACE'
+            ];
+
+            keys.forEach(key => {
+                const button = document.createElement('button');
+                button.textContent = key;
+                button.id = `key-${key}`;
+                button.classList.add('key');
+                if (key === 'ENTER' || key === 'BACKSPACE') {
+                    button.classList.add('wide');
+                }
+                button.addEventListener('click', () => handleKeyPress(key));
+                keyboard.appendChild(button);
+            });
+        }
+
+        // Handle key presses
+        function handleKeyPress(key) {
+            if (gameOver) return;
+
+            if (key === 'ENTER') {
+                submitGuess();
+            } else if (key === 'BACKSPACE') {
+                removeLetter();
+            } else {
+                addLetter(key);
+            }
+        }
+
+        // Add a letter to the current guess
+        function addLetter(letter) {
+            if (currentGuess.length < wordLength) {
+                currentGuess.push(letter);
+                updateGrid();
+            }
+        }
+
+        // Remove the last letter from the current guess
+        function removeLetter() {
+            if (currentGuess.length > 0) {
+                currentGuess.pop();
+                updateGrid();
+            }
+        }
+
+        // Update the game grid with the current guess
+        function updateGrid() {
+            const row = gameGrid.children[currentAttempt];
+            for (let i = 0; i < wordLength; i++) {
+                const box = row.children[i];
+                box.textContent = currentGuess[i] || '';
+            }
+        }
+
+        // Submit the current guess
+        function submitGuess() {
+            if (currentGuess.length !== wordLength) {
+                showMessage('Not enough letters!', 'red');
+                return;
+            }
+
+            const guess = currentGuess.join('').toUpperCase();
+            if (!validateGuess(guess)) {
+                showMessage('Invalid guess!', 'red');
+                return;
+            }
+
+            evaluateGuess(guess);
+            currentAttempt++;
+            currentGuess = [];
+
+            if (guess === targetWord) {
+                showMessage('🎉 Mubarak!', 'green');
+                gameOver = true;
+                showCongratsButton();
+            } else if (currentAttempt === maxAttempts) {
+                showMessage(`Game Over! The word was "${targetWord}".`, 'red');
+                gameOver = true;
+            }
+        }
+
+        // Simple validation (you can enhance this with a dictionary check)
+        function validateGuess(guess) {
+            // Allow only uppercase letters and no special characters
+            return /^[A-Z]{3}$/.test(guess);
+        }
+
+        // Evaluate the guess and provide feedback
+        function evaluateGuess(guess) {
+            const row = gameGrid.children[currentAttempt];
+            const targetLetters = targetWord.split('');
+            const guessLetters = guess.split('');
+
+            // Create arrays to track letter statuses
+            const letterStatus = Array(wordLength).fill('absent');
+
+            // First pass: Check for correct letters
+            for (let i = 0; i < wordLength; i++) {
+                if (guessLetters[i] === targetLetters[i]) {
+                    letterStatus[i] = 'correct';
+                    targetLetters[i] = null; // Remove matched letters
+                    guessLetters[i] = null;
+                }
+            }
+
+            // Second pass: Check for present letters
+            for (let i = 0; i < wordLength; i++) {
+                if (guessLetters[i] && targetLetters.includes(guessLetters[i])) {
+                    letterStatus[i] = 'present';
+                    targetLetters[targetLetters.indexOf(guessLetters[i])] = null;
+                }
+            }
+
+            // Update the grid and keyboard
+            for (let i = 0; i < wordLength; i++) {
+                const box = row.children[i];
+                box.classList.add(letterStatus[i]);
+                if (guessLetters[i] !== null) { // Only update if not already correct
+                    updateKeyboard(guessLetters[i], letterStatus[i]);
+                }
+            }
+        }
+
+        // Update the on-screen keyboard based on letter status
+        function updateKeyboard(letter, status) {
+            const key = document.getElementById(`key-${letter}`);
+            if (key) {
+                // Assign the highest priority status
+                if (status === 'correct') {
+                    key.classList.remove('present', 'absent');
+                    key.classList.add('correct');
+                } else if (status === 'present' && !key.classList.contains('correct')) {
+                    key.classList.remove('absent');
+                    key.classList.add('present');
+                } else if (status === 'absent' && !key.classList.contains('correct') && !key.classList.contains('present')) {
+                    key.classList.add('absent');
+                }
+            }
+        }
+
+        // Show a message to the user
+        function showMessage(text, color) {
+            message.textContent = text;
+            message.style.color = color;
+            message.style.display = 'block';
+        }
+
+        // Show the congratulatory button
+        function showCongratsButton() {
+            congratsButton.style.display = 'block';
+        }
+
+        // Display a congratulatory message and reveal the next activity button
+        congratsButton.addEventListener('click', () => {
+            window.location.href = 'final_prize.html'; // Create this page to show the final prize
+        });
+
+        // Initialize the game on page load
+        function initWordle() {
+            initGameGrid();
+            initKeyboard();
+
+            // Listen for physical keyboard input
+            document.addEventListener('keydown', (e) => {
+                if (gameOver) return;
+                const key = e.key.toUpperCase();
+                if (key === 'ENTER') {
+                    handleKeyPress('ENTER');
+                } else if (key === 'BACKSPACE') {
+                    handleKeyPress('BACKSPACE');
+                } else if (/^[A-Z]$/.test(key)) {
+                    handleKeyPress(key);
+                }
+            });
+        }
+
+        initWordle();
+    </script>
+</body>
+</html>
